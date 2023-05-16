@@ -60,7 +60,7 @@ simulation resume
 # Create the world here
 
 # Create a space station
-ds1 = npc_spawn(1000,0,1000, "DS1", "tsn", "starbase_command", "behav_station")
+ds1 = npc_spawn(1000,0,1000, "DS1", "tsn, Station", "starbase_command", "behav_station")
 
 # Create an enemy
 k001 = npc_spawn(-1000,0,1000, "K001", "raider", "kralien_dreadnaught", "behav_npcship")
