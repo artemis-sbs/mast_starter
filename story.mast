@@ -2,14 +2,11 @@
 #
 # Show the proper GUI for server vs Client Consoles
 #
+reroute server server_main
+reroute clients client_main
+route change console select_console
 
-if IS_SERVER:
-    start_text = "This is a start project for mast"
-    ->server_main
-else:
-    -> client_main
-end_if
-
+start_text = "A starter project written in mast"
 
 ======= server_main =====
 
@@ -70,12 +67,7 @@ k001 = npc_spawn(-1000,0,1000, "K001", "raider", "kralien_dreadnaught", "behav_n
 
 ====== client_main =======
 
-#
-# This handles the change client button to return to the select_console
-#
-event change_console:
-    ->select_console
-end_event
+
 #
 # Default the console to helm
 #
