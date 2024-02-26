@@ -2,9 +2,9 @@
 #
 # Show the proper GUI for server vs Client Consoles
 #
-reroute server server_main
-reroute clients client_main
-route change console select_console
+gui_reroute_server( server_main)
+gui_reroute_clients(client_main)
+route_change_console("select_console")
 
 start_text = "A starter project written in mast"
 
@@ -14,19 +14,19 @@ start_text = "A starter project written in mast"
 # Create the player ship so the clients see it
 # This is a simple script that has one playable ship
 #
-simulation create
-delay gui 1s
+sim_create()
+await delay_app(1)
 shared artemis =  to_id(player_spawn(0,0,0, "Artemis", "tsn", "tsn_battle_cruiser"))
-do assign_client_to_ship(0,artemis)
+assign_client_to_ship(0,artemis)
 
-section style="area:2,20,80,35;"
+gui_section(style="area:2,20,80,35;")
 
 """ {start_text}"""
 
-await choice:
+await gui():
     + "Start":
         ->> start
-end_await
+
 ### This continues on to the next label
 
 ===== end_game =======
@@ -37,23 +37,23 @@ end_await
 players = role("__PLAYER__")
 if len(players) == 0:
     start_text = "You lost"
-    simulation pause
+    sim_pause()
     -> server_main
-end_if
+
 #
 # No more enemies
 #
 raiders = role("raider")
 if len(raiders) == 0:
     start_text = "You won"
-    simulation pause
+    sim_pause()
     -> server_main
-end_if
-delay sim 5s
+
+await delay_sim(5)
 -> end_game
 
 ======== start ======
-simulation resume
+sim_resume()
 # Create the world here
 
 # Create a space station
@@ -75,23 +75,22 @@ console_select = "helm"
 
 ====== select_console ======
 
-section style="area:2,20,80,35;"
+gui_section(style="area:2,20,80,35;")
 
 """Select your console"""
 
-section style="area: 85,50, 99,90;"
-vradio console_select "helm,weapons, comms,science,engineering"
-blank
-row
+gui_section(style="area: 85,50, 99,90;")
+gui_vradio("helm,weapons, comms,science,engineering", var="console_select")
+gui_blank()
+gui_row()
 
-button "accept":
+on gui_message(gui_button("accept")):
     ->console_selected
-end_button
 
-await gui
+await gui()
 ->END
 
 ====== console_selected ====
-do assign_client_to_ship(client_id,artemis)
-console console_select
-await gui
+assign_client_to_ship(client_id,artemis)
+gui_console(console_select)
+await gui()
