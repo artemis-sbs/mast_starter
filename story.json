@@ -1,0 +1,24 @@
+{
+    "sbslib": [
+        "artemis-sbs.sbs_utils.v3.9.39.sbslib"
+    ],
+    "mastlib": [
+        "artemis-sbs.LegendaryMissions.autoplay.v3.9.39.mastlib",
+        "artemis-sbs.LegendaryMissions.ai.v3.9.39.mastlib",
+        "artemis-sbs.LegendaryMissions.commerce.v3.9.39.mastlib",
+        "artemis-sbs.LegendaryMissions.comms.v3.9.39.mastlib",
+        "artemis-sbs.LegendaryMissions.consoles.v3.9.39.mastlib",
+        "artemis-sbs.LegendaryMissions.damage.v3.9.39.mastlib",
+        "artemis-sbs.LegendaryMissions.docking.v3.9.39.mastlib",
+        "artemis-sbs.LegendaryMissions.fleets.v3.9.39.mastlib",
+        "artemis-sbs.LegendaryMissions.grid_comms.v3.9.39.mastlib",
+        "artemis-sbs.LegendaryMissions.hangar.v3.9.39.mastlib",
+        "artemis-sbs.LegendaryMissions.internal_comms.v3.9.39.mastlib",
+        "artemis-sbs.LegendaryMissions.operator.v3.9.39.mastlib",
+        "artemis-sbs.LegendaryMissions.science_scans.v3.9.39.mastlib",
+        "artemis-sbs.LegendaryMissions.side_missions.v3.9.39.mastlib",
+        "artemis-sbs.LegendaryMissions.upgrades.v3.9.39.mastlib",
+        "artemis-sbs.LegendaryMissions.zadmiral.v3.9.39.mastlib"
+    ]
+}
+

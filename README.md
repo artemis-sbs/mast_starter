@@ -1,2 +1,5 @@
-# mast_starter
-A project to start a mast project
+# Step two
+
+The map is moved to a folder
+
+
