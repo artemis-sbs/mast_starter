@@ -1,12 +1,15 @@
 {
     "auto_start": false,
+    "auto_play": {
+        "enable": false
+    },
     "operator_mode": {
         "enable": false,
         "logo": "media/operator",
-        "remote_console_select": false,
+        "show_logo_on_main": true,
         "pin": "000000"
     },
-    "players_count": 1,
+    "player_count": 1,
     "grid_theme": 0,
     "difficulty": 5,
     "world_select": "siege",
@@ -15,48 +18,56 @@
     "friendly_select": "few",
     "monster_select": "few",
     "upgrade_select": "lots",
-    "game_time_limit": 20,
+    "game_time_limit": 0,
     "war_time_delay": 10,
-    "player_ships": [
+    "player_list": [
         {
             "name": "Artemis",
             "side": "tsn",
-            "ship": "tsn_battle_cruiser"
+            "ship": "tsn_light_cruiser",
+            "face": "terran"
         },
         {
             "name": "Intrepid",
             "side": "tsn",
-            "ship": "tsn_battle_cruiser"
+            "ship": "tsn_battle_cruiser",
+            "face": "terran"
         },
         {
             "name": "Aegis",
             "side": "tsn",
-            "ship": "tsn_battle_cruiser"
+            "ship": "tsn_battle_cruiser",
+            "face": "terran"
         },
         {
             "name": "Horatio",
             "side": "tsn",
-            "ship": "tsn_battle_cruiser"
+            "ship": "tsn_battle_cruiser",
+            "face": "terran"
         },
         {
             "name": "Excalibur",
             "side": "tsn",
-            "ship": "tsn_battle_cruiser"
+            "ship": "tsn_battle_cruiser",
+            "face": "terran"
         },
         {
             "name": "Hera",
             "side": "tsn",
-            "ship": "tsn_battle_cruiser"
+            "ship": "tsn_battle_cruiser",
+            "face": "terran"
         },
         {
             "name": "Ceres",
             "side": "tsn",
-            "ship": "tsn_battle_cruiser"
+            "ship": "tsn_battle_cruiser",
+            "face": "terran"
         },
         {
             "name": "Diana",
             "side": "tsn",
-            "ship": "tsn_battle_cruiser"
+            "ship": "tsn_battle_cruiser",
+            "face": "terran"
         }
     ]
 }
