@@ -1,5 +1,5 @@
-# Step two
+# Artemis Cosmos Mission Template
 
-The map is moved to a folder
+Use this as a template to create any Cosmos mission using the MAST language.
 
-
+Learn how to use the [MAST Language](https://artemis-sbs.github.io/sbs_utils/).
