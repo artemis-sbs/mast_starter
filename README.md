@@ -24,6 +24,18 @@ sbs templates
 You can still use the green **Use this template** button on GitHub instead - it gives you
 the minimal mission at the repository root.
 
+### What is on this branch
+
+| Template | What you get |
+|---|---|
+| `minimal` | One `@map` and a line of narration. The smallest thing that runs. |
+| `sandbox` | Two sides, a station in an asteroid field, player ships, and raider waves that ramp with the difficulty setting. Start here if you want a mission. |
+
+The v1.4.0 line adds `addon`, `amd` and `ou`. They are not here because they need
+language and library features v1.3.0 does not have - `provides` / `requires`, and the
+AMD loaders. Even `sandbox` is not the same file on both lines: `pickup_spawn`,
+`scatter_box` and `ship_data_plain_asteroid_keys` do not exist in the v1.3.0 sbslib.
+
 ## Release lines
 
 Each supported release line has its own branch, and a mission's dependencies are pinned to
