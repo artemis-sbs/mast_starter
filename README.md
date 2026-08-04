@@ -24,6 +24,16 @@ sbs templates
 You can still use the green **Use this template** button on GitHub instead - it gives you
 the minimal mission at the repository root.
 
+### What is on this branch
+
+| Template | What you get |
+|---|---|
+| `minimal` | One `@map` and a line of narration. The smallest thing that runs. |
+| `sandbox` | Two sides, a station in an asteroid field, player ships, and raider waves that ramp with the difficulty setting. Start here if you want a mission. |
+| `addon` | A shareable add-on (`provides` / `requires`, packaged as a `.mastlib`) plus a harness map to run it. Start here if you want to build something *other* missions use. |
+| `amd` | Quests and science scans authored as data in a `.amd` fact sheet, with MAST holding only the logic that reacts. |
+| `ou` | Built on the OpenUniverse engine: a whole procedurally generated universe authored in one `.amd`. |
+
 ## Release lines
 
 Each supported release line has its own branch, and a mission's dependencies are pinned to
