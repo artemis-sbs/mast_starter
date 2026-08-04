@@ -1,0 +1,12 @@
+{
+    "line": "v1.3.0",
+    "templates": [
+        {
+            "id": "minimal",
+            "title": "Minimal mission",
+            "blurb": "One @map and a line of narration. The smallest thing that runs.",
+            "path": ".",
+            "tags": ["mast"]
+        }
+    ]
+}
