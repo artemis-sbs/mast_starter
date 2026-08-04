@@ -1,0 +1,16 @@
+#
+# The addon's entry point. The MAST runtime finds an addon by this file, and this file
+# does nothing but declare what the addon offers and pull in its parts.
+#
+# `provides` names a capability other addons can depend on. Addons load in a
+# NON-DETERMINISTIC order and share one global namespace, so "my addon uses a label from
+# theirs" is only safe if it is declared:
+#
+#   requires <token>    HARD - the story fails to COMPILE if nothing provides it
+#   suggests <token>    SOFT - a warning, and compilation continues
+#
+# Both are compile-time only, and both are v1.4.0 or later.
+#
+provides my_addon
+
+import panel.mast

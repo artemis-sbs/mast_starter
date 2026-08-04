@@ -1,0 +1,50 @@
+#
+# A mission built on the Open Universe ENGINE.
+#
+# `universe_core` (an OpenUniverse mastlib, listed in story.json) does the work: it
+# generates systems from a seed, runs the jump drive, sides, reputation, trade and jobs.
+# What THIS mission supplies is a universe to run - authored as data in `my_universe.amd`
+# - and a @map to start it from.
+#
+# The engine carries no @map of its own, so the one below is the only entry the start
+# screen shows.
+#
+
+# Which universe to load. universe_core's own universe.mast declares
+# `default shared UNIVERSE_SELECT = "Default"`; a mission's story.mast compiles BEFORE the
+# mastlibs, so this `default` runs first and wins.
+default shared UNIVERSE_SELECT = "My Universe"
+
+
+#
+# Register the universe so the engine can find it. The engine scans for `type: universe/*`
+# labels and reads the named .amd relative to THIS mission folder.
+#
+=== universe_my_universe
+metadata:``` yaml
+type: universe/my_universe
+key: my_universe
+display: My Universe
+universe: my_universe.amd
+```
+    ->END
+
+
+@map/my_universe "My Universe"
+" Explore a procedurally generated frontier. Engage the jump drive on the Navigation
+" console to travel between systems - the same seed always regenerates the same galaxy.
+metadata:``` yaml
+Properties:
+  Main:
+    Start: 'gui_drop_down("$text: {START_MODE};list: Continue, New Game", var="START_MODE")'
+    Player Ships: 'gui_int_slider("$text:int;low: 1.0;high:8.0;", var= "PLAYER_COUNT")'
+    Difficulty: 'gui_int_slider("$text:int;low: 1.0;high:11.0;", var= "DIFFICULTY")'
+    Seed: 'gui_input("desc: Integer (0 = random);", var="seed_value")'
+GameCode:
+  - PLAYER_COUNT
+  - DIFFICULTY
+  - seed_value
+```
+    UNIVERSE_SELECT = "My Universe"
+    # Everything from here is the engine's. `universe_map_begin` lives in universe_core.
+    jump universe_map_begin

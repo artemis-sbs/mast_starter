@@ -1,0 +1,17 @@
+#Every mission should have this file included.  It describes the mission for the mission list screen of the server.
+format version: 1
+
+# Category for the mission; used for sorting and filtering the mission list
+Category: Development
+
+# Letter grade for the category; A grade categories appear at the top of the list
+Category Priority: C
+
+# Name of the mission as it appears in the mission list
+Visible Mission Name: Addon Harness
+
+# A short (one line) description of the mission.
+Description: Test harness for an addon under development.
+
+# Keywords are used to communicate the type of mission this is.
+Keywords: development

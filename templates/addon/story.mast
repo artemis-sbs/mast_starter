@@ -1,0 +1,31 @@
+#
+# This mission is the addon's TEST HARNESS, not the addon.
+#
+# The addon is `my_addon/`. While you are developing, it is picked up automatically
+# because it sits inside the mission folder. Run `sbs debug .`, pick this map, and the
+# addon's "Status" console is in the console picker.
+#
+# To ship it: `sbs lib .` builds `my_addon` into a .mastlib from the `__lib__.json`
+# entry, and another mission uses it by listing that .mastlib in its story.json.
+#
+
+# The LegendaryMissions fleets addon would create player ships from settings.yaml. This
+# harness makes exactly one, itself, so there is less machinery between you and the bug.
+PLAYER_CREATE_DEFAULT = False
+PLAYER_COUNT = 1
+
+#
+# `player_ensure` rather than `player_spawn`: it fills SLOT 0 only if that slot is empty,
+# so a second emit of this signal is a no op instead of a second Artemis - while a slot
+# emptied by a reset or a destroyed ship still gets refilled. `sbs lint` flags the
+# unkeyed spawn, and it is right to: init signals do get emitted more than once.
+#
+//shared/signal/create_player_ships
+    shared player = to_object(player_ensure(0, 0, 0, 0, "tsn_light_cruiser", "Artemis", "tsn"))
+    ->END
+
+
+@map/addon_harness "Addon Harness"
+" A map that exists only to exercise the addon.
+    npc_spawn(*Vec3(2000, 0, 2000), "DS 1", "tsn, station", "starbase_command", "behav_station")
+    ->END

@@ -1,0 +1,69 @@
+// One authored file holding a whole universe. Heading level sets the structure:
+//   #    the universe itself (its identity)
+//   ##   a chapter: Sides / Jobs / Narrative / Regions / ...
+//   ###  an entry within a chapter (one side, one job type, one story beat)
+//
+// Each heading's data lives between `---` fences as `Label: value` fact lines, and the
+// prose under the fence is what players read.
+//
+// Almost everything is optional. Reputation axes, standing tuning and the generation
+// dials all fall back to engine defaults when you leave them out - which is why this file
+// is short. Add chapters as you want them.
+
+# [My Universe](my_universe)
+---
+Universe
+Display: My Universe
+---
+A small frontier to build on. Two sides, a handful of jobs, and space to fill in.
+
+
+// ---- The factions. Each heading key IS the side key. `Home` is a system coordinate on
+// the galaxy grid; `Offers` names the job types this side hands out.
+## [Sides](sides)
+
+### [Iron Concord](iron)
+---
+Color: #3399ff
+Character: military
+Disposition: neutral
+Home: 6, 4
+Values: by-the-book 40, honest 20
+Offers: patrol, escort
+Flies: 60% Kralien, 40% Arvonian
+---
+Disciplined and territorial. Respects strength and straight dealing.
+
+### [Ashfall Run](ashfall)
+---
+Color: #cc6633
+Character: outlaw
+Disposition: hostile
+Home: 2, 7
+Offers: salvage
+Flies: Torgoth
+---
+Salvagers who stopped waiting for wrecks to happen on their own.
+
+
+// ---- Job types the sides above can offer. The engine generates the individual jobs;
+// these records say what KINDS exist and what they pay.
+## [Jobs](jobs)
+
+### [Patrol](patrol)
+---
+Reward: 200 credits
+---
+Sweep a system and clear whatever is hunting in it.
+
+### [Escort](escort)
+---
+Reward: 250 credits
+---
+See a freighter safely to its destination.
+
+### [Salvage](salvage)
+---
+Reward: 150 credits
+---
+Recover what is worth recovering, and do not ask where it came from.

@@ -1,0 +1,37 @@
+#
+# A custom console, contributed by this addon.
+#
+# Any mission that loads the addon gets this console in its picker - the mission itself
+# needs no code. That is the whole point of packaging MAST as an addon.
+#
+# Format: @console/name !priority ^sort_order "Display Name"
+#
+@console/status !0 ^90 "Status"
+    " Live ship status, repainted when it changes.
+--- repaint
+    ship_id = sbs.get_ship_of_client(client_id)
+    ->END if ship_id is None
+
+    alert = get_data_set_value(ship_id, "red_alert", 0)
+    # Remembered so the watcher below can tell when it has changed.
+    prev_alert = alert
+    alert_text = "RED ALERT" if alert else "ALL CLEAR"
+
+    gui_section(style="area: 10, 10, 90, 40;")
+    gui_row("row-height: 3em;")
+    gui_text(f"{alert_text}")
+
+    # A GUI SUB task: it is cancelled automatically when this client is shown a different
+    # screen. Schedule it as a plain task instead and you leak one watcher per repaint.
+    gui_sub_task_schedule("status_watch")
+    await gui()
+
+--- status_watch
+    await delay_sim(1)
+    # The ship can be destroyed while the console is up.
+    ->END if not object_exists(ship_id)
+    alert = get_data_set_value(ship_id, "red_alert", 0)
+    if alert != prev_alert:
+        # Redirect the CONSOLE's gui task, not this sub-task, so the panel rebuilds.
+        gui_task_jump("repaint")
+    jump status_watch

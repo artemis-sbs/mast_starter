@@ -9,6 +9,46 @@
             "tags": [
                 "mast"
             ]
+        },
+        {
+            "id": "sandbox",
+            "title": "Sandbox mission",
+            "blurb": "Two sides, a station in an asteroid field, player ships and raider waves.",
+            "path": "templates/sandbox",
+            "tags": [
+                "mast"
+            ]
+        },
+        {
+            "id": "addon",
+            "title": "Mastlib addon",
+            "blurb": "A shareable addon plus a harness map to run it. Uses provides/requires.",
+            "path": "templates/addon",
+            "tags": [
+                "mast",
+                "library"
+            ]
+        },
+        {
+            "id": "amd",
+            "title": "AMD driven mission",
+            "blurb": "Quests and science scans authored as data in a .amd fact sheet.",
+            "path": "templates/amd",
+            "tags": [
+                "mast",
+                "amd"
+            ]
+        },
+        {
+            "id": "ou",
+            "title": "Open Universe mission",
+            "blurb": "Built on the OpenUniverse engine: a whole universe authored in one .amd.",
+            "path": "templates/ou",
+            "tags": [
+                "mast",
+                "amd",
+                "openuniverse"
+            ]
         }
     ]
 }

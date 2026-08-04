@@ -2,6 +2,8 @@
 
 Use this as a template to create any Cosmos mission using the MAST language.
 
+> **This branch is the v1.4.0 release line.** `sbs templates` lists what every line offers.
+
 Learn how to use the [MAST Language](https://artemis-sbs.github.io/sbs_utils/).
 
 ## Creating a mission

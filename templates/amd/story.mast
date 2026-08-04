@@ -1,0 +1,74 @@
+#
+# An AMD-driven mission.
+#
+# The quests and the science-scan text are NOT in this file - they are authored as data in
+# `mission.amd`. What lives here is only the logic that reacts: spawn the objects, and emit
+# the signals the quest steps are waiting on.
+#
+# The payoff is that adding a quest step, or rewording a scan, is an edit to a fact sheet
+# a non programmer can read - no MAST changes at all.
+#
+
+shared MISSION_DOC = None
+
+tsn = await prefab_spawn(prefab_side_generic, data={"key":"tsn"})
+side_set_display_name(tsn, "TSN")
+side_set_icon_color(tsn, "#07F")
+
+@media/music/default "Cosmos Default Music"
+
+
+@map/amd_sample "AMD Sample"
+" A short investigation, with its content authored in a .amd fact sheet.
+metadata: ``` yaml
+Properties:
+    Player Ships: 'gui_int_slider("$text:int;low: 1.0;high:8.0;", var= "PLAYER_COUNT")'
+```
+    # Parse the fact sheet ONCE. `amd_mission_data` is the combined mission vocabulary -
+    # it understands quests, scans and landmarks, so one file can hold every section.
+    MISSION_DOC = document_get_amd_file(get_mission_dir_filename("mission.amd"), data_parser=amd_mission_data)
+
+    # Hand each section to its loader.
+    # SHARED grants the quest once for the whole crew; granting to a player's id instead
+    # would give every ship its own copy - that is the difference between a story arc and
+    # a job board.
+    quest_grant_amd(SHARED, amd_section(MISSION_DOC, "quests"))
+    science_define_scan_amd(amd_section(MISSION_DOC, "scans"))
+
+    npc_spawn(0, 0, 0, "DS 1", "tsn, station", "starbase_command", "behav_station")
+
+    # The `derelict` ROLE is what ties this object to the scan records in the .amd -
+    # `Scan of: derelict`. Any number of objects can wear it.
+    hulk = npc_spawn(0, 0, 9000, "Unknown Hulk", "tsn, derelict", "tsn_warpster", "behav_npcship")
+    shared hulk_id = to_id(hulk)
+
+    await task_schedule(spawn_players)
+    await task_schedule(docking_standard_player_station)
+
+    game_end_condition_add(destroyed_all(role("__player__")), "All ships destroyed.", False)
+
+    sub_task_schedule(watch_for_arrival)
+    ->END
+
+
+#
+# The only logic the quest needs: notice the players reached the hulk, and say so. The
+# quest step named `find` is waiting on exactly this signal name.
+#
+=== watch_for_arrival
+    ->END if not object_exists(hulk_id)
+    for p in to_object_list(role("__player__")):
+        if sbs.distance_id(p.id, hulk_id) < 2000:
+            signal_emit("derelict_found")
+            ->END
+    await delay_sim(2)
+    jump watch_for_arrival
+
+
+#
+# A science scan of anything with the `derelict` role completes the second step. The scan
+# TEXT comes from the .amd; this route only reports that it happened.
+#
+//science if has_roles(SCIENCE_SELECTED_ID, "derelict")
+    signal_emit("derelict_scanned")
+    ->END

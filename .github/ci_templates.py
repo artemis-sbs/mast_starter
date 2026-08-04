@@ -46,8 +46,8 @@ def fetch(url, dest):
     return True
 
 
-def compile_template(name, folder):
-    """Compile `folder`'s story.mast in a SUBPROCESS.
+def compile_template(name, folder, mast_rel="story.mast"):
+    """Compile one .mast entry point under `folder`, in a SUBPROCESS.
 
     A subprocess because sbs_utils caches module state and path globals on import; compiling
     a second template in the same interpreter would compile it against the first one's
@@ -70,12 +70,12 @@ fs.script_dir = str(folder)
 # the library's own notes warn about, and it fails as "@map: unrecognized syntax".
 import sbs_utils.mast_sbs.story_nodes
 from sbs_utils.mast.mast_run import mast_run
-errors = mast_run(str(folder / "story.mast"), True) or []
+errors = mast_run(str(folder / sys.argv[3]), True) or []
 for e in errors:
     print(e)
 sys.exit(1 if errors else 0)
 '''
-    r = subprocess.run([sys.executable, "-c", code, str(folder), str(LIB)],
+    r = subprocess.run([sys.executable, "-c", code, str(folder), str(LIB), mast_rel],
                        capture_output=True, text=True)
     sys.stdout.write(r.stdout)
     sys.stderr.write(r.stderr)
@@ -140,9 +140,24 @@ def main():
             print("::endgroup::")
             continue
 
-        if compile_template(tid, dst):
-            print(f"{tid}: OK ({', '.join(sorted(lines))})")
-        else:
+        # Every entry point, not just story.mast. An addon template's own .mast files are
+        # reached through its `__init__.mast`, which story.mast never imports - so compiling
+        # only story.mast would leave the actual addon untested, which is the one thing an
+        # addon template exists to carry.
+        entries = ["story.mast"]
+        libs = dst / "__lib__.json"
+        if libs.exists():
+            for addon in json.loads(libs.read_text()).get("mastlib", []):
+                init = dst / addon / "__init__.mast"
+                if init.exists():
+                    entries.append(f"{addon}/__init__.mast")
+                else:
+                    print(f"::error::template '{tid}' declares mastlib '{addon}' with no __init__.mast")
+                    failed.append(tid)
+
+        if tid not in failed and all(compile_template(tid, dst, e) for e in entries):
+            print(f"{tid}: OK ({', '.join(sorted(lines))}, {len(entries)} entry point(s))")
+        elif tid not in failed:
             print(f"::error::MAST compile failed for template '{tid}'")
             failed.append(tid)
         print("::endgroup::")
