@@ -15,7 +15,12 @@ on:
 
 jobs:
   templates:
-    runs-on: ubuntu-latest
+    # WINDOWS, and it has to be: the v1.3.0 sbslib cannot be imported on Linux at all -
+    # `sbs_utils/procedural/gui/screen_shot.py` binds `ctypes.WinDLL` at module scope, so
+    # merely importing the library to compile anything raises AttributeError. v1.4.0 no
+    # longer does this and its branch runs on ubuntu; v1.3.0 is released and cannot be
+    # changed. A per-line difference like this is exactly why the line is a branch.
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
