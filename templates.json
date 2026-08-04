@@ -6,7 +6,18 @@
             "title": "Minimal mission",
             "blurb": "One @map and a line of narration. The smallest thing that runs.",
             "path": ".",
-            "tags": ["mast"]
+            "tags": [
+                "mast"
+            ]
+        },
+        {
+            "id": "sandbox",
+            "title": "Sandbox mission",
+            "blurb": "Two sides, a station in an asteroid field, player ships and raider waves.",
+            "path": "templates/sandbox",
+            "tags": [
+                "mast"
+            ]
         }
     ]
 }

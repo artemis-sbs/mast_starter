@@ -1,0 +1,95 @@
+#
+# A playable starting point: two sides, a station in an asteroid field, player ships,
+# and raider waves that ramp with the Difficulty setting.
+#
+# All of this is ordinary MAST. Cut what you do not want and the mission still runs.
+#
+
+# Remembered so any task can reach the station.
+shared station_id = None
+
+#
+# Sides, and how they feel about each other. `prefab_side_generic` comes from the
+# LegendaryMissions `prefabs` addon, which story.json loads for you.
+#
+tsn = await prefab_spawn(prefab_side_generic, data={"key":"tsn"})
+side_set_display_name(tsn, "TSN")
+side_set_description(tsn, "The Terran Stellar Navy")
+side_set_icon_color(tsn, "#07F")
+
+raider = await prefab_spawn(prefab_side_generic, data={"key":"raider", "name":"Raider", "color":"#F00", "desc":"Hostile Aliens"})
+
+side_set_relations(tsn, raider, sbs.DIPLOMACY.HOSTILE)
+
+#
+# Music and skybox. These are labels that EXECUTE, not data, so anything they might read
+# has to be defined above them.
+#
+@media/music/default "Cosmos Default Music"
+@media/skybox/sky-bored-alice "borealis"
+
+
+#
+# The map. Everything under `Properties` becomes a control on the mission start screen,
+# and the variable each one writes is readable in the body below.
+#
+@map/sandbox "Sandbox"
+" Hold the station until the clock runs out.
+metadata: ``` yaml
+Properties:
+    Player Ships: 'gui_int_slider("$text:int;low: 1.0;high:8.0;", var= "PLAYER_COUNT")'
+    Difficulty: 'gui_int_slider("$text:int;low: 1.0;high:11.0;", var= "DIFFICULTY")'
+    Game Length: 'gui_input("desc: Minutes;", var="GAME_TIME_LIMIT")'
+```
+    # --- the station the players are defending ---------------------------------
+    station = npc_spawn(0, 0, 0, "Starbase Anchor", "tsn, station", "starbase_civil", "behav_station")
+    station_id = to_id(station)
+    # A face, so the station has someone to be when a player hails it.
+    set_face(station_id, random_terran(civilian=True))
+
+    # --- somewhere to hide -----------------------------------------------------
+    # One call, rather than a scatter loop: the helper picks the rock types, places them
+    # and sizes them. Drop to `terrain_spawn` in a loop when you want control of each one.
+    terrain_spawn_asteroid_box(0, 0, 0, size_x=20000, size_z=20000, density=2, height=1500)
+
+    # --- player ships ----------------------------------------------------------
+    # Both labels come from LegendaryMissions: `spawn_players` places the ships listed in
+    # settings.yaml, `docking_standard_player_station` wires up docking at friendly bases.
+    await task_schedule(spawn_players)
+    await task_schedule(docking_standard_player_station)
+
+    # --- how this can be lost --------------------------------------------------
+    game_end_condition_add(destroyed_all(role("__player__")), "All ships destroyed.", False)
+    game_end_condition_add(destroyed_any(station_id), "The station was destroyed.", False)
+
+    # Higher difficulty sends waves closer together.
+    seconds_between_waves = max(20, 60 - DIFFICULTY * 4)
+    # `int(...)` matters: GAME_TIME_LIMIT is written by a `gui_input` control, which hands
+    # back a STRING. Without it `set_timer` fails at runtime, and it compiles cleanly.
+    set_timer(0, "sandbox_clock", minutes=int(GAME_TIME_LIMIT))
+
+---defend
+    await delay_sim(seconds_between_waves)
+    task_schedule(spawn_wave)
+    jump defend if not is_timer_finished(0, "sandbox_clock")
+
+    # Surviving the clock is the win. It is declared here rather than with
+    # `game_end_condition_add` because that needs a promise, and `is_timer_finished`
+    # returns a plain bool. START_TEXT / GAME_STARTED / GAME_ENDED are shared variables
+    # owned by the LegendaryMissions `consoles` addon.
+    START_TEXT = "You held the line. Well done."
+    GAME_STARTED = False
+    GAME_ENDED = True
+    signal_emit("show_game_results", None)
+    ->END
+
+
+#
+# One raider fleet, somewhere off the station. `prefab_fleet_raider` builds the ships and
+# attaches their AI for you; `fleet_difficulty` picks the fleet size.
+#
+=== spawn_wave
+    fleet_pos = Vec3.rand_in_sphere(8000, 20000, False, True)
+    fleet_data = ~~{"race": "skaraan", "fleet_difficulty": int(DIFFICULTY - 1), "START_X": fleet_pos.x, "START_Y": fleet_pos.y, "START_Z": fleet_pos.z}~~
+    prefab_spawn(prefab_fleet_raider, fleet_data)
+    ->END
