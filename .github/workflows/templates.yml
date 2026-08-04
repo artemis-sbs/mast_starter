@@ -1,12 +1,11 @@
 name: templates
 
-# Every template in templates.json is created the way an author would create it -
-# through `sbs create`, against THIS ref - and then compiled. A template that does not
-# compile is worse than no template: the author who used it has no way to tell whether
-# the error is theirs.
+# Every entry in templates.json is staged the way `sbs create` lays it down, its sbslib is
+# downloaded from the release it pins, and its story.mast is compiled. A template that does
+# not compile is worse than no template: the author who used it has no way to tell whose
+# error it is.
 #
-# This also dogfoods `sbs create`: if a manifest entry points at a path that is not in
-# the repo, the create step fails here rather than on somebody's machine.
+# See .github/ci_templates.py for what this does and does NOT catch.
 
 on:
   push:
@@ -19,47 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
-      - name: Read the template ids
-        id: ids
-        run: |
-          ids=$(python -c "import json;print(' '.join(t['id'] for t in json.load(open('templates.json'))['templates']))")
-          echo "ids=$ids" >> "$GITHUB_OUTPUT"
-          echo "templates: $ids"
-
-      - name: Get the sbs tool
-        run: |
-          mkdir -p work
-          curl -fsSL -o work/sbs.pyz \
-            https://github.com/artemis-sbs/sbs_cli/releases/latest/download/sbs.pyz
-
-      - name: Create and compile every template
-        working-directory: work
-        env:
-          # A fork's PR is built from the fork, so the owner cannot be hard-coded.
-          OWNER: ${{ github.repository_owner }}
-          REPO: ${{ github.event.repository.name }}
-          REF: ${{ github.head_ref || github.ref_name }}
-        run: |
-          set -e
-          fail=0
-          for id in ${{ steps.ids.outputs.ids }}; do
-            echo "::group::$id"
-            # `create` pulls from GitHub, so point it at the ref under test rather than
-            # at whatever is already published on main.
-            python sbs.pyz create "ci_$id" -t "$id" -y -u "$OWNER" -r "$REPO" -b "$REF" \
-              || { echo "::error::create failed for template '$id'"; fail=1; echo "::endgroup::"; continue; }
-            python sbs.pyz compile "ci_$id" \
-              || { echo "::error::MAST compile failed for template '$id'"; fail=1; }
-            # AMD is optional; a template with no .amd files must not fail here.
-            if compgen -G "ci_$id/**/*.amd" > /dev/null; then
-              python sbs.pyz lint "ci_$id" \
-                || { echo "::error::AMD lint failed for template '$id'"; fail=1; }
-            fi
-            echo "::endgroup::"
-          done
-          exit $fail
+      - run: python .github/ci_templates.py
