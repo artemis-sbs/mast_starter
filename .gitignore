@@ -10,3 +10,6 @@
 /addons/
 /.addons/
 _ci/
+# Rendered documents from `sbs docs` - build output, not source. An embedded
+# edition can run to several MB because it inlines the face atlases.
+/__docs__/
