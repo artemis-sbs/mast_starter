@@ -2,10 +2,10 @@
 format version: 1
 
 # Category for the mission; used for sorting and filtering the mission list
-Category: Standard  # Common categories include: Classic, Standard, and Development
+Category: Example  # Common categories include: Classic, Standard, and Development
 
 # Letter grade for the category; A grade categories appear at the top of the list
-Category Priority: B  
+Category Priority: C
 
 # Name of the mission as it appears in the mission list
 Visible Mission Name: Mast Starter  
