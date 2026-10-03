@@ -46,6 +46,11 @@ Properties:
     quest_grant_amd(SHARED, amd_section(MISSION_DOC, "quests"))
     science_define_scan_amd(amd_section(MISSION_DOC, "scans"))
 
+    # The ruins, if mission.amd has a Relics section: each one is built where its `Loc:`
+    # says, with its walls, what is inside it and its name on the map. With no such
+    # section this line does nothing.
+    relics_spawn(get_mission_dir_filename("mission.amd"))
+
     npc_spawn(0, 0, 0, "DS 1", "tsn, station", "starbase_command", "behav_station")
 
     # The `derelict` ROLE is what ties this object to the scan records in the .amd -
