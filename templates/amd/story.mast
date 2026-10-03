@@ -47,19 +47,24 @@ Properties:
 
     game_end_condition_add(destroyed_all(role("__player__")), "All ships destroyed.", False)
 
-    sub_task_schedule(watch_for_arrival)
+    # A task of its own, NOT a sub-task: a sub-task ends with the task that started it,
+    # and this map label ends on the next line.
+    task_schedule(watch_for_arrival)
     ->END
 
 
 #
-# The only logic the quest needs: notice the players reached the hulk, and say so. The
-# quest step named `find` is waiting on exactly this signal name.
+# The only logic the quest needs: notice the players reached the hulk, and say so.
+#
+# A quest hears a signal as `quest_signal` carrying SIGNAL_NAME - the name written after
+# `Done when: signal` in mission.amd. A plain signal_emit("derelict_found") would reach
+# a `//signal/derelict_found` route and no quest.
 #
 === watch_for_arrival
     ->END if not object_exists(hulk_id)
     for p in to_object_list(role("__player__")):
         if sbs.distance_id(p.id, hulk_id) < 2000:
-            signal_emit("derelict_found")
+            signal_emit("quest_signal", {"SIGNAL_NAME": "derelict_found"})
             ->END
     await delay_sim(2)
     jump watch_for_arrival
@@ -70,5 +75,5 @@ Properties:
 # TEXT comes from the .amd; this route only reports that it happened.
 #
 //science if has_roles(SCIENCE_SELECTED_ID, "derelict")
-    signal_emit("derelict_scanned")
+    signal_emit("quest_signal", {"SIGNAL_NAME": "derelict_scanned"})
     ->END
