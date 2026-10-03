@@ -11,6 +11,10 @@
 
 shared MISSION_DOC = None
 
+# The crew roster, if mission.amd has one: who sits at each console. Read here, before
+# anyone picks a console. With no crew section in the file this does nothing.
+crew_load_amd("mission.amd")
+
 tsn = await prefab_spawn(prefab_side_generic, data={"key":"tsn"})
 side_set_display_name(tsn, "TSN")
 side_set_icon_color(tsn, "#07F")
@@ -26,12 +30,19 @@ Properties:
 ```
     # Parse the fact sheet ONCE. `amd_mission_data` is the combined mission vocabulary -
     # it understands quests, scans and landmarks, so one file can hold every section.
-    MISSION_DOC = document_get_amd_file(get_mission_dir_filename("mission.amd"), data_parser=amd_mission_data)
+    # `shared`, so a route added later (it runs as a task of its own) reads the same
+    # document rather than the None this name starts as.
+    shared MISSION_DOC = document_get_amd_file(get_mission_dir_filename("mission.amd"), data_parser=amd_mission_data)
 
     # Hand each section to its loader.
     # SHARED grants the quest once for the whole crew; granting to a player's id instead
     # would give every ship its own copy - that is the difference between a story arc and
     # a job board.
+    # The cast and their conversations, if mission.amd has those sections. Both lines do
+    # nothing when a section is missing, so they stay here whether you use them or not.
+    lifeforms_spawn(amd_section(MISSION_DOC, "characters"))
+    dialogue_register_scenes(amd_section(MISSION_DOC, "dialogue"))
+
     quest_grant_amd(SHARED, amd_section(MISSION_DOC, "quests"))
     science_define_scan_amd(amd_section(MISSION_DOC, "scans"))
 
