@@ -22,5 +22,8 @@
         "artemis-sbs.LegendaryMissions.gamemaster_comms.v1.4.0.mastlib",
         "artemis-sbs.LegendaryMissions.basic_player_destroy.v1.4.0.mastlib",
         "artemis-sbs.LegendaryMissions.races.v1.4.0.mastlib"
+    ],
+    "shared_media": [
+        "artemis-sbs.LegendaryMissions.media.v1.4.0.zip"
     ]
 }

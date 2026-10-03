@@ -14,5 +14,8 @@
         "artemis-sbs.LegendaryMissions.science_scans.v1.4.0.mastlib",
         "artemis-sbs.LegendaryMissions.documents.v1.4.0.mastlib",
         "artemis-sbs.LegendaryMissions.races.v1.4.0.mastlib"
+    ],
+    "shared_media": [
+        "artemis-sbs.LegendaryMissions.media.v1.4.0.zip"
     ]
 }
