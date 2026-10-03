@@ -15,6 +15,16 @@
 # mastlibs, so this `default` runs first and wins.
 default shared UNIVERSE_SELECT = "My Universe"
 
+# How the crew travels. Both are set here, before the mastlibs, for the same reason as
+# the line above: LegendaryMissions' Quests tab declares the first one False, and whoever
+# says `default` first wins.
+#   QUEST_ENGAGE_ENABLED  puts the Engage button on Helm's Quests tab. Without it the crew
+#                         can take a cargo run and never fly it.
+#   WAYPOINTS_ENABLED     keeps a list of the named places the crew has been, so they can
+#                         Engage a way back.
+default shared QUEST_ENGAGE_ENABLED = True
+default shared WAYPOINTS_ENABLED = True
+
 
 #
 # Register the universe so the engine can find it. The engine scans for `type: universe/*`
