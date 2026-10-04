@@ -38,6 +38,11 @@ Properties:
     # SHARED grants the quest once for the whole crew; granting to a player's id instead
     # would give every ship its own copy - that is the difference between a story arc and
     # a job board.
+    # The factions, if mission.amd has a Sides section: each record is a side, with its
+    # color and who it fights. First, so the people and places below can belong to one.
+    # With no such section this line does nothing.
+    sides_declare_amd(amd_section(MISSION_DOC, "sides"))
+
     # The cast and their conversations, if mission.amd has those sections. Both lines do
     # nothing when a section is missing, so they stay here whether you use them or not.
     lifeforms_spawn(amd_section(MISSION_DOC, "characters"))
