@@ -40,6 +40,17 @@
             ]
         },
         {
+            "id": "away",
+            "title": "Away mission on a tile map",
+            "blurb": "A landing party walks a tile map: props, people, hostiles and scenes in one .amd. No Python.",
+            "path": "templates/away",
+            "tags": [
+                "mast",
+                "amd",
+                "boarding"
+            ]
+        },
+        {
             "id": "ou",
             "title": "Open Universe mission",
             "blurb": "Built on the OpenUniverse engine: a whole universe authored in one .amd.",

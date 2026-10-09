@@ -1,0 +1,88 @@
+#
+# A landing party on a tile map, with no Python.
+#
+# The crew flies to a relay, beams down, and walks a map: things to use, people to talk
+# to, something that shoots back, and a way to win or lose. None of that is in this file.
+# It is authored as data:
+#
+#   mission.amd              the crew, the quests, and everything on the ground
+#   ground/landing.tiles     the map - one area, drawn in text
+#   ground/starter.tileset   what kinds of ground there are, and which can be walked
+#
+# What lives here is only the logic that reacts: read the file, load the ground with one
+# line, and open the landing party when the ship reaches the relay.
+#
+
+shared MISSION_DOC = None
+
+# The crew roster in mission.amd: who sits at each console - and so who beams down. Read
+# here, before anyone picks a console.
+crew_load_amd("mission.amd")
+
+tsn = await prefab_spawn(prefab_side_generic, data={"key":"tsn"})
+side_set_display_name(tsn, "TSN")
+side_set_icon_color(tsn, "#07F")
+
+@media/music/default "Cosmos Default Music"
+
+
+@map/away_sample "Kesh Relay"
+" A landing party on a tile map, with its content authored in a .amd fact sheet.
+metadata: ``` yaml
+Properties:
+    Player Ships: 'gui_int_slider("$text:int;low: 1.0;high:8.0;", var= "PLAYER_COUNT")'
+```
+    # Parse the fact sheet ONCE. `amd_mission_data` is the combined mission vocabulary, so
+    # one file can hold every section. `shared`, so the route at the end of this file (it
+    # runs as a task of its own) reads the same document rather than the None this name
+    # starts as.
+    shared MISSION_DOC = document_get_amd_file(get_mission_dir_filename("mission.amd"), data_parser=amd_mission_data)
+
+    # The factions, the cast and their conversations, the places and the scan text, if
+    # mission.amd has those sections. Each line does nothing when its section is missing,
+    # so they stay here whether you use them or not.
+    sides_declare_amd(amd_section(MISSION_DOC, "sides"))
+    lifeforms_spawn(amd_section(MISSION_DOC, "characters"))
+    dialogue_register_scenes(amd_section(MISSION_DOC, "dialogue"))
+    landmarks_spawn(amd_section(MISSION_DOC, "landmarks"))
+    science_define_scan_amd(amd_section(MISSION_DOC, "scans"))
+
+    # THE GROUND, in one line. It finds every .tileset and .tiles file in this mission's
+    # folder, loads the art that the TILE_ART setting names, and puts the Props, People
+    # and Hostiles sections of mission.amd on the map, with the Scenes they open.
+    # Anything it could not place is named in mast.runtime.log.
+    boarding_ground_load(MISSION_DOC)
+
+    # SHARED grants each quest once, for the whole crew.
+    quest_grant_amd(SHARED, amd_section(MISSION_DOC, "quests"))
+
+    # The `relay` ROLE is what ties this station to `Done when: reach relay 6000` in
+    # mission.amd. The players start beside it, so the party is offered straight away;
+    # move it and the crew has to fly there first.
+    npc_spawn(0, 0, 0, "Kesh Relay", "tsn, station, relay", "starbase_civil", "behav_station")
+
+    await task_schedule(spawn_players)
+    await task_schedule(docking_standard_player_station)
+
+    game_end_condition_add(destroyed_all(role("__player__")), "All ships destroyed.", False)
+    ->END
+
+
+#
+# THE CARD: open the landing party.
+#
+# `Then: signal relay_reached` in mission.amd sends this signal when the quest "Hold at
+# the Relay" completes. `boarding_visit` then runs the whole visit: it offers each console
+# a place (Boarding Party, on the ePADD), stands whoever goes on the map at the area's
+# `entry:`, hands each person their side story, and brings everybody home when the game
+# ends.
+#
+# `area="landing"` is the `area:` line of ground/landing.tiles - where they beam down.
+# There is no first room: on a tile map a scene belongs to the thing or the person that
+# opens it.
+#
+//shared/signal/relay_reached
+    party_ship = next(iter(role("__player__")), None)
+    ->END if party_ship is None
+    boarding_visit(party_ship, boarding_ground_scenes(), title="Kesh Relay", area="landing", stories=amd_section(MISSION_DOC, "side_stories"))
+    ->END

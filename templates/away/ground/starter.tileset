@@ -1,0 +1,17 @@
+# The ground's RULES: which kinds of tile can be walked on, which can be seen across,
+# and which shared ground LOOK draws each one. The pictures themselves come from the
+# art packs named by TILE_ART in settings.yaml - this file never names a picture.
+#
+# Each word after a kind is a rule it has. A kind with neither `walk` nor `see` is a
+# solid thing: rock. A kind you can see across but not walk (a cliff edge) is what
+# makes a map readable - the far side is visible, getting there is the puzzle.
+tileset: starter
+title: Starter ground
+kinds:
+  dust:    walk see   look=dirt
+  scrub:   walk see   look=dirt_grass
+  pad:     walk see   look=stone_tiles
+  floor:   walk see   look=floor_metal
+  rock:               look=rock
+  cliff:        see   look=cliff
+  wall:    tall       look=wall_metal

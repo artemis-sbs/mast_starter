@@ -1,0 +1,44 @@
+# One AREA: a place the landing party walks. The header says what it is, the legend says
+# what each character in the map means, and everything after `---` is the map itself.
+#
+# A legend line is ONE character, a colon, and a tile kind from starter.tileset. Add
+# `@name` and every cell drawn with that character is also a MARK called `name` - a
+# place mission.amd can stand something on with `Mark: name`.
+#
+# `entry:` is where somebody who beams down stands.
+area: landing
+title: Kesh Relay
+tileset: starter
+entry: pad
+legend:
+  .: dust
+  ,: scrub
+  #: rock
+  ^: cliff
+  =: pad
+  _: floor
+  W: wall
+  P: pad @pad
+  D: floor @door
+  B: floor @beacon
+  T: dust @terminal
+  k: dust @caretaker
+  t: dust @tent
+  s: dust @sentry
+  c: dust @keycard
+  h: scrub @cache
+---
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^###.....,,.......WWWWWWWWW.##^^
+^##.......,,......W_______W..#^^
+^#..===....,.t....W___B___W...^^
+^#..=P=...........W_______W...^^
+^#..===.....k.....WWWWDWWWW...^^
+^#...................T........^^
+^#....,,......................#^
+^#...,h,,.....................#^
+^##...,,............s.........#^
+^^#.....................c....##^
+^^##.........,,.............##^^
+^^^###......,,,,........#####^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

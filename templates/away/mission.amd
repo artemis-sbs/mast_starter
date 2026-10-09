@@ -1,0 +1,338 @@
+// A landing party on a tile map, with no Python.
+//
+// Everything the crew meets on the ground is written in this file. The ground itself is
+// `ground/landing.tiles` (the map) and `ground/starter.tileset` (what can be walked).
+// story.mast holds only the logic that reacts: it reads this file, loads the ground with
+// one line, and opens the landing party when the ship reaches the relay.
+//
+// A record is `### [Display Name](key)`, an optional `---` fenced block of fields, then
+// body prose. Comments are `//` - note that .mast uses `#` instead.
+
+# [Kesh Relay](kesh_relay)
+
+
+// ---- The crew: who sits at each console, and so who goes down. You beam down as the
+// person you have been all evening. `Roles:` is what a choice asks for (`if medical`).
+// `Skills:` is what a `check` rolls with: a ten sided die, plus the skill, plus one for
+// each crew member standing beside you who has it.
+## [The Watch](crew)
+---
+crew
+Ship: Artemis
+---
+The watch aboard when Kesh Relay went dark.
+
+### [Lt Dana Ross](ross)
+---
+Console: helm
+Roles: helm
+Skills: helm 4, engineering 1
+---
+
+### [Lt Sam Reyes](reyes)
+---
+Console: weapons
+Roles: security
+Skills: security 4, athletics 2
+---
+
+### [Dr Ines Hale](hale)
+---
+Console: science
+Roles: medical, science
+Skills: medical 4, science 3
+---
+
+### [Chief Okoro](okoro)
+---
+Console: engineering
+Roles: engineering
+Skills: engineering 4, science 1
+---
+
+### [Ens Tam Vale](vale)
+---
+Console: comms
+Roles: comms
+Skills: comms 3, science 2
+---
+
+
+// ---- Quests. `Scope: shared` is one copy for the whole crew.
+//
+// HOW THE GAME ENDS. `Win:` and `Lose:` are the last sentence the crew reads. COMPLETING
+// a quest that has `Win:` wins the game with it; FAILING a quest that has `Lose:` loses
+// it. A choice in a scene does either one: `; completes relight` or `; fails relight`
+// (see The Beacon, at the end of this file).
+## [Quests](quests)
+
+### [Relight Kesh Relay](relight)
+---
+Scope: shared
+Starts when: at once
+Objective: Light the beacon at Kesh Relay
+Leads to: beacon
+Win: The beacon is lit. Every convoy on the Kesh run has its way home again.
+Lose: The beacon is slag. The Kesh run stays dark, and the convoys must find another road.
+---
+The relay's beacon went dark nine days ago. Go down and light it.
+
+// `reach relay 6000` waits for a ship within 6000 of anything with the ROLE `relay` -
+// story.mast gives the station that role. `Then: signal relay_reached` is what opens the
+// landing party: story.mast has one route waiting on exactly that name.
+### [Hold at the Relay](arrive)
+---
+Scope: shared
+Starts when: at once
+Objective: Close to within 6000 of Kesh Relay
+Done when: reach relay 6000
+Then: signal relay_reached
+---
+Bring the ship in close enough for a transporter lock.
+
+
+// ---- Side stories: a quest for ONE person. `For:` is a job from a `Roles:` line (or a
+// crew member's key). Each is handed to its person when they beam down; one nobody on
+// the ground answers to is handed to nobody. `Leads to:` names what it points at, by key.
+## [Side Stories](side_stories)
+
+### [The Caretaker's Cough](cough)
+---
+For: medical
+Starts when: at once
+Objective: See to the caretaker
+Done when: signal marrow_treated
+Leads to: marrow
+---
+The man who kept the relay has been breathing its dust for nine days.
+
+// When somebody on the ground is put down for good, the game sends the signal
+// `hostile_down_` and their key.
+### [Clear the Yard](clear_yard)
+---
+For: security
+Starts when: at once
+Objective: Put the relay's sentry out of action
+Done when: signal hostile_down_sentry
+Leads to: sentry
+---
+The sentry does not know a friend from a thief any more.
+
+
+// ---- Props: things on the ground. `Area:` is the area file it stands in, and `Mark:` a
+// mark in that file (or `At: x, y`, a cell). What a prop DOES is whichever of these it
+// has: `Scene:` opens a scene for whoever uses it, `Item:` is picked up into their pack,
+// `Opens with:` makes it a door. `Blocks: yes` means nobody walks through it.
+// `Scan:` is what the device's Scan app says about it.
+## [Props](props)
+
+### [Yard terminal](terminal)
+---
+Area: landing
+Mark: terminal
+Sprite: prop:terminal
+Scene: terminal
+Blocks: yes
+Scan: Still drawing a trickle of power. Its last entry is nine days old.
+---
+A weatherproof terminal beside the relay door, its screen still lit.
+
+// A DOOR. `Opens with:` is tried in order by whoever uses it: a key anyone in the party
+// is carrying, a skill check, a CUT shot from the device, or a signal - here the one the
+// terminal sends once somebody has the door code.
+### [Relay door](door)
+---
+Area: landing
+Mark: door
+Sprite: prop:hatch
+Open sprite: prop:doorframe
+Blocks: yes
+Opens with: key relay_key, check engineering 9, cut, signal relay_unlocked
+Scan: Mag locked. The keycard reader beside it is live.
+---
+The only way into the relay house. Shut, and meant to stay that way.
+
+// A PICKUP. Using it puts `relay_key` in the pack of whoever picked it up.
+### [Relay keycard](keycard)
+---
+Area: landing
+Mark: keycard
+Sprite: prop:keycard
+Item: relay_key
+---
+A gray keycard on a lanyard, dropped where the sentry walks.
+
+// HIDDEN until a signal. It is not on the map at all until `cache_known` is sent - which
+// the caretaker's scene does, further down.
+### [Medical kit](cache)
+---
+Area: landing
+Mark: cache
+Sprite: prop:crate_medical
+Item: medkit
+Hidden until: cache_known
+---
+A sealed medical kit under camouflage netting.
+
+### [The beacon](beacon)
+---
+Area: landing
+Mark: beacon
+Sprite: prop:beacon
+Scene: beacon
+Blocks: yes
+Scan: No power in the lamp. The socket for its cell is empty.
+---
+The relay's beacon: a lamp the height of two people, dark.
+
+// SCENERY. A prop with no scene, no item, no lock and no words is furniture: it is drawn
+// and it blocks, and nothing offers to use it.
+### [Tent](tent)
+---
+Area: landing
+Mark: tent
+Sprite: prop:tent
+Blocks: yes
+---
+
+
+// ---- People: someone you can walk up to and talk with. `Calm: yes` means they never
+// attack. `Talk scene:` is the scene a click on them opens. `Face:` is shown beside what
+// they say (`male`, `female`, or a face string).
+## [People](people)
+
+### [Old Marrow](marrow)
+---
+Area: landing
+Mark: caretaker
+Sprite: fig:junker_m
+Face: male
+Calm: yes
+Talk scene: marrow
+Scan: One human. Elevated pulse, and a wet cough.
+---
+The relay's caretaker, sitting on an upturned crate beside his tent.
+
+
+// ---- Hostiles: someone who walks a `Patrol:` (cells, `x y; x y`), notices a crew member
+// within `Notice:` cells, and attacks. `HP:` is how much it takes; `Stun:` how many
+// seconds a stun shot holds it; `Drops:` what it leaves where it falls.
+## [Hostiles](hostiles)
+
+### [Relay sentry](sentry)
+---
+Area: landing
+Mark: sentry
+Sprite: fig:robot_war
+HP: 2
+Damage: 1
+Notice: 4
+Stun: 10
+Speed: 2
+Patrol: 20 9; 26 9; 26 11; 20 11
+Drops: power_cell
+Scan: Security frame, nine days without a recognition update. One power cell.
+---
+A security frame walking the same square it has walked for nine days.
+
+
+// ---- Scenes: what is said, and what can be answered. Each `%` line is something the
+// scene may say (one is picked). Each `-` line is a choice: `[words](where it leads)`,
+// then `if <who may take it>`, then `; <what it does>`. An empty `()` ends the scene.
+//
+// WHO: a job (`if medical`), how good (`if skill science >= 3`), what they carry
+// (`if holding power_cell`), or what the party has worked out - how many things
+// (`if learned >= 2`) or one named thing (`if learned codes`).
+//
+// WHAT IT DOES: `learn <fact>`, `signal <name>`, `take <item>`, `give <item>`,
+// `check <skill> <number> else <scene>` (a failed roll goes to that scene instead),
+// `completes <quest>`, `fails <quest>`.
+## [Scenes](scenes)
+
+### [The Yard Terminal](terminal)
+%{learned codes < 1} One line on the screen, over and over: DOOR SEALED. AWAITING CODE.
+%{learned codes} DOOR SEALED. AWAITING CODE. And now you have one to give it.
+
+- [Read the log](terminal_log) ; learn log
+- [Pull the door code out of its memory](terminal_code) if skill science >= 3
+- [Force the service port](terminal_code) ; check engineering 8 else terminal_dead
+- [Send the door code](terminal_sent) if learned codes ; signal relay_unlocked
+- [Step back]()
+
+### [Nine Days](terminal_log)
+% Day one: beacon cell failing. Day two: cell removed for test and fitted to the sentry, which has the only good socket. Day three: sentry no longer answers to its keeper. The entries stop.
+
+- [Step back](terminal)
+
+### [Six Digits](terminal_code)
+% The door code is six digits, stored in the clear. Whoever built this place trusted the dust to keep people out.
+
+- [Copy it down](terminal) ; learn codes
+
+### [Dead Screen](terminal_dead)
+% The service port spits once and the screen goes dark. The log, the code and the cursor go with it.
+
+- [Step back]()
+
+### [The Door Answers](terminal_sent)
+% The terminal thinks about it. Across the yard, the relay door drops its bolts with a bang.
+
+- [Step back]()
+
+### [Old Marrow](marrow)
+% "Nine days dark. I kept the kettle on and nobody came." He coughs into his sleeve, and looks at your uniform as if it might not be real.
+
+- [Ask how to get into the relay house](marrow_key)
+- [Ask about the sentry](marrow_sentry)
+- [Ask what he has put by](marrow_cache) ; signal cache_known
+- [Look at that cough](marrow_treated) if medical ; signal marrow_treated
+- [Leave him to his kettle]()
+
+### [The Keycard](marrow_key)
+% "Keycard. I dropped it in the yard the day the sentry turned on me, and I have not been back for it. The terminal by the door knows the code too, if you can make it talk."
+
+- [Ask him something else](marrow)
+- [Thank him]()
+
+### [The Sentry](marrow_sentry)
+% "It has the beacon's power cell in its chest. Stun it and you have ten seconds. Put it down for good and the cell is yours - and the beacon wants one."
+
+- [Ask him something else](marrow)
+- [Thank him]()
+
+### [Put By](marrow_cache)
+% He nods at the scrub beside the landing pad. "Medical kit, under the netting. I was saving it for somebody worse off than me. That might be you, if you go near the sentry."
+
+- [Ask him something else](marrow)
+- [Thank him]()
+
+### [Dust Lung](marrow_treated)
+% You listen to his chest for a long minute. Dust lung, nine days of it, and nothing that will not mend. He takes the inhaler like it is made of glass.
+
+- [Leave him to his kettle]()
+
+// THE ENDINGS. Both `Call it in` answers complete the quest `relight`, which has a
+// `Win:` line - that wins the game. `Step back from the smoke` fails it, and it has a
+// `Lose:` line - that loses it. Either way the landing party is brought home.
+### [The Beacon](beacon)
+% The beacon fills the room, dark. The socket for its power cell is empty, and somebody has left the governor housing open.
+
+- [Fit the power cell](beacon_lit) if holding power_cell ; take power_cell
+- [Bring it up by hand on the standby coil](beacon_hand) if engineering ; check engineering 11 else beacon_burn
+- [Pull the governor and run it wide open](beacon_burn)
+- [Leave it dark for now]()
+
+### [Light](beacon_lit)
+% The cell seats with a click you feel in your teeth. The lamp turns once, twice, and then the whole room is white.
+
+- [Call it in]() ; completes relight
+
+### [Light, the Hard Way](beacon_hand)
+% The standby coil whines, catches and holds. It is not pretty, and it will not last a year. It will last until somebody brings a new cell.
+
+- [Call it in]() ; completes relight
+
+### [Smoke](beacon_burn)
+% The coil arcs white, then orange, then nothing at all. What is left of the lamp is glass on the floor and a smell you will not forget.
+
+- [Step back from the smoke]() ; fails relight
