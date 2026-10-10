@@ -156,7 +156,7 @@ The only way into the relay house. Shut, and meant to stay that way.
 ### [Relay keycard](keycard)
 ---
 Area: landing
-Mark: keycard
+Mark: yard
 Sprite: prop:keycard
 Item: relay_key
 ---
@@ -167,7 +167,7 @@ A gray keycard on a lanyard, dropped where the sentry walks.
 ### [Medical kit](cache)
 ---
 Area: landing
-Mark: cache
+Mark: scrub
 Sprite: prop:crate_medical
 Item: medkit
 Hidden until: cache_known
@@ -222,7 +222,7 @@ The relay's caretaker, sitting on an upturned crate beside his tent.
 ### [Relay sentry](sentry)
 ---
 Area: landing
-Mark: sentry
+Mark: post
 Sprite: fig:robot_war
 HP: 2
 Damage: 1

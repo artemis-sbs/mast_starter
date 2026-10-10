@@ -24,9 +24,9 @@ legend:
   T: dust @terminal
   k: dust @caretaker
   t: dust @tent
-  s: dust @sentry
-  c: dust @keycard
-  h: scrub @cache
+  s: dust @post
+  c: dust @yard
+  h: scrub @scrub
 ---
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ^###.....,,.......WWWWWWWWW.##^^
